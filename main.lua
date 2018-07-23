@@ -13,7 +13,7 @@ local paint = {
 	direction = "up"
 }
 	
-local background = display.newRect( 240, 160, 567, 320 )
+local background = display.newRect( 240, 160, 700, 320 )
 background.anchorX = 0.5
 background.anchorY = 0.5
 background.fill = paint
