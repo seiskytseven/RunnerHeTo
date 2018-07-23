@@ -6,6 +6,9 @@
 
 -- Your code here
 
+local physics = require("physics")
+physics.start()
+
 local paint = {
 	type = "gradient",
 	color1 = { 0, 0.3, 0.4 },
@@ -80,4 +83,16 @@ Runtime:addEventListener("enterFrame", asphalt)
 
 asphalt2.enterFrame = scrollBackground
 Runtime:addEventListener("enterFrame", asphalt2)
+
+
+local lattia = display.newRect( 0, 270, 700, 10 )
+lattia.anchorX = 0.1
+lattia.anchorY = 1.0
+physics.addBody( lattia, "static", {friction=0.5, bounce=0.3 } )
+
+
+local fumiko = display.newRect( 60, 150, 30, 50 )
+fumiko.anchorX = 0.1
+fumiko.anchorY = 1.0
+physics.addBody( fumiko, "obj", {friction=0.5, bounce=0.3 } )
 
