@@ -13,10 +13,18 @@ loopCount = 0
 local animationMage = display.newSprite( sheetMage, sheetMageSequenceData )
 animationMage.x = 500
 animationMage.y = 250
-animationMage.speed = math.random(2,6)
 physics.addBody( animationMage, "dynamic", {friction=0.5, bounce=0.0, density=1.0},
     { box={ halfWidth=15, halfHeight=2, x=0, y=0 }, isSensor=true } )
 animationMage.isFixedRotation = true
 animationMage.sensorOverlaps = 0
-	
-animationMage:play()
+
+--function moveMage(self, event)
+	--if self.x < -50 then
+		--self.x = 500
+		--else
+		--self.x = self.x - self.speed
+		--end
+--end
+
+--animationMage.enterFrame = moveMage
+--Runtime:addEventListener("enterFrame", mage)
