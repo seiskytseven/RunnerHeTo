@@ -141,9 +141,9 @@ lattia.alpha = 0.8
 lattia.objType = "ground"
 physics.addBody( lattia, "static", {friction=0.5, bounce=0.0 } )
 
-local sheetFumikoData = { width=24, height=32, numFrames=136, sheetContentWidth=408, sheetContentHeight=256 }
+local sheetFumikoData = { width=42, height=56, numFrames=136, sheetContentWidth=714, sheetContentHeight=448 }
 
-local sheetFumiko = graphics.newImageSheet( "fumiko2.png", sheetFumikoData )
+local sheetFumiko = graphics.newImageSheet( "Fumiko3.png", sheetFumikoData )
 
 local sheetFumikoSequenceData = {
 { name = "juoksu",
@@ -186,7 +186,7 @@ local function touchAction( event )
         -- Jump procedure here
         local vx, vy = animationFumiko:getLinearVelocity()
         animationFumiko:setLinearVelocity( vx, 0 )
-        animationFumiko:applyLinearImpulse( nil, -7, animationFumiko.x, animationFumiko.y )
+        animationFumiko:applyLinearImpulse( nil, -18, animationFumiko.x, animationFumiko.y )
 		
     end
 end
