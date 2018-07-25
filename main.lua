@@ -145,3 +145,5 @@ physics.addBody( lattia, "static", {friction=0.5, bounce=0.0 } )
 
 
 local fumiko = require("scripts.fumiko")
+local bat = require("scripts.bat")
+local mage = require("scripts.mage")
