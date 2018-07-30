@@ -279,7 +279,7 @@ function scene:create( event )
 				self.sensorOverlaps = 0
 			end
 		elseif ( event.other.objType == "enemy" ) and ( event.phase == "began" ) then
-			composer.gotoScene( "scenes.start", "fade", 100 )
+			composer.gotoScene( "scenes.restart", "fade", 800 )
 		end
 	end
 	-- Associate collision handler function with character
@@ -355,7 +355,8 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-		
+		fumiko:pause()
+		bat:pause()
 		
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

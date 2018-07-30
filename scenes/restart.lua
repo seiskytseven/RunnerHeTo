@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- restart.lua
+-- template.lua
 --
 -----------------------------------------------------------------------------------------
 
@@ -12,14 +12,12 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-
-local bgColor
-local buildingsGroup
-local asphaltGroup
-local brickwallGroup
-local ground
-local brickShadow
-local fumiko
+ 
+local paint
+local paint2
+local background
+local box
+local startButton
  
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -31,43 +29,46 @@ function scene:create( event )
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 	
-	bgColor = require( "objects.bg" )
-	sceneGroup:insert( bgColor )
 	
-	buildingsGroup = require( "objects.buildings" )
-	sceneGroup:insert( buildingsGroup )
+	paint = {
+	type = "gradient",
+	color1 = { 0.4, 0.1, 0.2 },
+	color2 = { 0.2, 0.1, 0.2, 0.2},
+	direction = "up"
+	}
 	
-	asphaltGroup = require( "objects.asphalt" )
-	sceneGroup:insert( asphaltGroup )
+	paint2 = {
+	type = "gradient",
+	color1 = { 0.7, 0.7, 0.7 },
+	color2 = { 0.5, 0.5, 0.5, 0.2},
+	direction = "down"
+	}
+		
+	background = display.newRect( sceneGroup, display.contentCenterX, display.contentCenterY, 700, 320 )
+	background.fill = paint
 	
-	brickwallGroup = require( "objects.brickwall" )
-	sceneGroup:insert( brickwallGroup )
+	box = display.newRoundedRect( sceneGroup, display.contentCenterX, display.contentCenterY, 300, 80, 10 )
+	box.fill = paint2
 	
-	brickShadow = require( "objects.brickShadow" )
-	sceneGroup:insert( brickShadow )
-	
-	ground = require( "objects.ground" )
-	sceneGroup:insert( ground )
-	
-	fumiko = require( "objects.fumiko" )
-	sceneGroup:insert( fumiko )
-	
-	startButton = display.newText ( "Restart", display.contentCenterX, display.contentCenterY, native.systemFont, 40 )
-	sceneGroup:insert( startButton )
+	startButton = display.newText ( sceneGroup, "Try again", display.contentCenterX, display.contentCenterY, native.systemFont, 40 )
+	startButton:setFillColor( 0.1, 0.2, 0.2 )
 	
 	local function onObjectTouch( event )
 		if ( event.phase == "began" ) then
 			-- print( "Touch event began on: " .. event.target.id )
 		elseif ( event.phase == "ended" ) then
 			-- print( "Touch event ended on: " .. event.target.id )
-			composer.gotoScene( "game", "fade", 100 )
+			composer.gotoScene( "scenes.game", "fade", 100 )
 			
 		end
 		return true
 	end
 	
-	startButton:addEventListener( "touch", onObjectTouch )
+	box:addEventListener( "touch", onObjectTouch )
 
+
+
+	
 end
  
  
@@ -78,13 +79,11 @@ function scene:show( event )
     local phase = event.phase
  
     if ( phase == "will" ) then
-        -- Code here runs when the scene is still off screen (but is about to come on screen)	
-		
-		
+        -- Code here runs when the scene is still off screen (but is about to come on screen)
+ 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-		fumiko:setSequence( "istuminen" )
-		fumiko:play()		
+ 
     end
 end
  
