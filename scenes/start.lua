@@ -57,7 +57,7 @@ function scene:create( event )
 			-- print( "Touch event began on: " .. event.target.id )
 		elseif ( event.phase == "ended" ) then
 			-- print( "Touch event ended on: " .. event.target.id )
-			composer.gotoScene( "scenes.game", "fade", 100 )
+			composer.gotoScene( "scenes.game", "fade", 600 )
 			
 		end
 		return true

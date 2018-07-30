@@ -311,11 +311,12 @@ function scene:show( event )
         -- Code here runs when the scene is still off screen (but is about to come on screen)
 		
 		-- physics.setDrawMode( "debug" )
-		
+		physics.start()
 		fumiko:setSequence( "juoksu" )
 		fumiko:play()
 		fumiko.x = 10
 		fumiko.y = 270
+		fumiko:setLinearVelocity( 0, 0 )
 		fumiko.sensorOverlaps = 1
 		bat:setSequence( "lento" )
 		bat:play()
@@ -355,8 +356,10 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
+		physics.pause()
 		fumiko:pause()
 		bat:pause()
+		
 		
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
