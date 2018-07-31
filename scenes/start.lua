@@ -18,7 +18,10 @@ local paint2
 local background
 local box
 local startButton
- 
+local clickSound
+local menuMusic
+local menuMusicChannel
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -28,6 +31,10 @@ function scene:create( event )
  
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
+	
+		
+	clickSound = audio.loadSound( "scenes/sounds/click.mp3" )
+	menuMusic = audio.loadStream( "scenes/musics/Harp.mp3" )
 	
 	paint = {
 	type = "gradient",
@@ -55,6 +62,7 @@ function scene:create( event )
 	local function onObjectTouch( event )
 		if ( event.phase == "began" ) then
 			-- print( "Touch event began on: " .. event.target.id )
+			audio.play( clickSound )
 		elseif ( event.phase == "ended" ) then
 			-- print( "Touch event ended on: " .. event.target.id )
 			composer.gotoScene( "scenes.game", "fade", 600 )
@@ -65,8 +73,8 @@ function scene:create( event )
 	
 	box:addEventListener( "touch", onObjectTouch )
 
-
-
+	
+	menuMusicChannel = audio.play( menuMusic, { channel=1, loops=-1 } )
 	
 end
  
@@ -79,10 +87,11 @@ function scene:show( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
+		
  
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
- 
+		audio.resume( menuMusicChannel )
     end
 end
  
@@ -95,6 +104,8 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
+		audio.rewind( {channel = 1} )
+		audio.stop( {channel = 1} )
  
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

@@ -27,7 +27,11 @@ local brickShadow
 local ground
 local fumiko
 local bat
--- local mage
+local mage
+local gameMusic
+local jumpSound
+local gameMusicChannel
+local gameEffectChannel
  
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -40,9 +44,14 @@ function scene:create( event )
     -- Code here runs when the scene is first created but has not yet appeared on screen
 	
 	
+	
 	local physics = require("physics")
 	physics.start()
 	-- physics.setGravity( 0, 1.5 )
+	
+	gameMusic = audio.loadStream( "scenes/musics/Emotive-Loop.mp3" )
+	jumpSound = audio.loadSound( "scenes/sounds/jump2.mp3" )
+	
 		
 	local paint = {
 		type = "gradient",
@@ -224,6 +233,8 @@ function scene:create( event )
 	}
 	}
 	mage = display.newSprite( sheetMage, sheetMageSequenceData )
+	mage.anchorX = 0.5
+	mage.anchorY = 1.0
 	mage.isFixedRotation = true
 	mage.speed = 3
 	physics.addBody( mage, "static", { outline=mageOutLine, friction=0.5, bounce=0.0, density=1.0} )
@@ -269,7 +280,7 @@ function scene:create( event )
 	function moveMage(self, event)
 		if self.x < -150 then
 			self.x = 800
-			self.y = 250
+			self.y = 270
 		else
 			self.x = self.x - self.speed
 		end
@@ -278,10 +289,10 @@ function scene:create( event )
 	mage.enterFrame = moveMage
 	
 	function touchAction( event )
-			print("nappi")
-			print(fumiko.sensorOverlaps)
-			print(event.phase)
 		if ( event.phase == "began" and fumiko.sensorOverlaps == 1 ) then
+		
+			
+			audio.play( jumpSound, { channel = 2 } )
 		
 			-- Jump procedure here
 			local vx, vy = fumiko:getLinearVelocity()
@@ -294,8 +305,6 @@ function scene:create( event )
 
 
 	function sensorCollide( self, event )
-		if (event.phase == "began" ) then
-		end
 		-- Confirm that the colliding elements are the foot sensor and a ground object
 		if ( event.selfElement == 6 and event.other.objType == "ground" ) then
 		
@@ -310,7 +319,7 @@ function scene:create( event )
 				self:play()
 				self.sensorOverlaps = 0
 			end
-		elseif ( event.other.objType == "enemy" ) and ( event.phase == "began" ) then
+		elseif ( event.other.objType == "enemy" and  event.phase == "began" and event.selfElement ~= 6 ) then
 			composer.gotoScene( "scenes.restart", "fade", 800 )
 		end
 	end
@@ -329,7 +338,6 @@ function scene:create( event )
 	
 	
 
-
 end
  
  
@@ -338,6 +346,8 @@ function scene:show( event )
  
     local sceneGroup = self.view
     local phase = event.phase
+	
+	
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
@@ -357,7 +367,7 @@ function scene:show( event )
 		mage:setSequence( "kavely" )
 		mage:play()
 		mage.x = 800
-		mage.y = 250
+		mage.y = 270
 			
 		Runtime:addEventListener("enterFrame", buildings)
 		Runtime:addEventListener("enterFrame", buildings2)
@@ -373,12 +383,13 @@ function scene:show( event )
 		Runtime:addEventListener("enterFrame", bat)
 		Runtime:addEventListener("enterFrame", mage)
 		
+		
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
 		
-				
-		
-		
+		gameMusicChannel = audio.play( gameMusic, { channel=1, loops=-1 } )
+		audio.setVolume( 0.15, { gameMusicChannel } )
+		audio.setVolume( 0.90, { channel = 2 } )
     end
 end
  
@@ -395,11 +406,11 @@ function scene:hide( event )
 		fumiko:pause()
 		bat:pause()
 		mage:pause()
-		
+		audio.rewind( { channel = 1 } )
+		audio.stop( { channel = 1 } )
 		
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
-		
 		
     end
 end
