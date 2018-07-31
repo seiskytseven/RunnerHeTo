@@ -207,6 +207,28 @@ function scene:create( event )
 	bat.objType = "enemy"
 	sceneGroup:insert( bat )
 	
+	local sheetMageData = { width=64, height=64, numFrames=20, sheetContentWidth=576, sheetContentHeight=256 }
+
+	local sheetMage = graphics.newImageSheet( "scenes/images/magekavely.png", sheetMageData )
+
+	local mageFrameIndex = 18
+	
+	local mageOutLine = graphics.newOutline ( 2, sheetMage, mageFrameIndex )
+	
+	local sheetMageSequenceData = {
+	{ name = "kavely",
+	start = 10,
+	count = 9,
+	time = 280,
+	loopCount = 0
+	}
+	}
+	mage = display.newSprite( sheetMage, sheetMageSequenceData )
+	mage.isFixedRotation = true
+	mage.speed = 3
+	physics.addBody( mage, "static", { outline=mageOutLine, friction=0.5, bounce=0.0, density=1.0} )
+    mage.objType = "enemy"
+	sceneGroup:insert( mage )
 			
 	function scrollBackground(self, event)
 		
@@ -244,7 +266,17 @@ function scene:create( event )
 
 	bat.enterFrame = moveBat
 	
+	function moveMage(self, event)
+		if self.x < -150 then
+			self.x = 800
+			self.y = 250
+		else
+			self.x = self.x - self.speed
+		end
+	end
 
+	mage.enterFrame = moveMage
+	
 	function touchAction( event )
 			print("nappi")
 			print(fumiko.sensorOverlaps)
@@ -322,8 +354,10 @@ function scene:show( event )
 		bat:play()
 		bat.x = 800
 		bat.y = math.random(180,250)
-		
-		
+		mage:setSequence( "kavely" )
+		mage:play()
+		mage.x = 800
+		mage.y = 250
 			
 		Runtime:addEventListener("enterFrame", buildings)
 		Runtime:addEventListener("enterFrame", buildings2)
@@ -337,6 +371,7 @@ function scene:show( event )
 		fumiko:addEventListener( "collision" )
 		fumiko:addEventListener( "sprite", spriteListener )
 		Runtime:addEventListener("enterFrame", bat)
+		Runtime:addEventListener("enterFrame", mage)
 		
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
@@ -359,6 +394,7 @@ function scene:hide( event )
 		physics.pause()
 		fumiko:pause()
 		bat:pause()
+		mage:pause()
 		
 		
     elseif ( phase == "did" ) then
