@@ -16,6 +16,7 @@ local scene = composer.newScene()
 local paint
 local paint2
 local paint3
+local paint4
 local background
 local buildings
 local buildings2
@@ -32,6 +33,12 @@ local gameMusic
 local jumpSound
 local gameMusicChannel
 local gameEffectChannel
+local scoreText
+local score
+local options
+local scoreTimer
+local scoreboard
+
  
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -47,10 +54,10 @@ function scene:create( event )
 	
 	local physics = require("physics")
 	physics.start()
-	-- physics.setGravity( 0, 1.5 )
+	physics.setGravity( 0, 20 )
 	
-	gameMusic = audio.loadStream( "scenes/musics/Emotive-Loop.mp3" )
-	jumpSound = audio.loadSound( "scenes/sounds/jump2.mp3" )
+	-- gameMusic = audio.loadStream( "scenes/musics/Emotive-Loop.mp3" )
+	-- jumpSound = audio.loadSound( "scenes/sounds/jump2.mp3" )
 	
 		
 	local paint = {
@@ -73,7 +80,16 @@ function scene:create( event )
 		color2 = { 0.4, 0.4, 0.4, 0.4},
 		direction = "down"
 	}
+	
+	
+	paint4 = {
+	type = "gradient",
+	color1 = { 0.7, 0.7, 0.7 },
+	color2 = { 0.5, 0.5, 0.5, 0.2},
+	direction = "down"
+	}
 		
+	
 	background = display.newRect( sceneGroup, 240, 160, 700, 320 )
 	background.anchorX = 0.5
 	background.anchorY = 0.5
@@ -144,8 +160,17 @@ function scene:create( event )
 	ground.alpha = 0.8
 	ground.objType = "ground"
 	physics.addBody( ground, "static", {friction=0.5, bounce=0.0 } )
+		
 	
+	scoreboard = display.newRoundedRect( sceneGroup, 320, 50, 200, 40, 10 )
+	scoreboard.anchorX, scoreboard.anchorY = 0.0, 0.5
+	scoreboard.fill = paint4
+		
 	
+	scoreText = display.newText( sceneGroup, "Score: 0", 0, 0, native.systemFont, 30)
+	scoreText.anchorX, scoreText.anchorY = 0.0, 0.5
+	scoreText.x, scoreText.y = 330, 50
+	scoreText:setFillColor( 0.05, 0.1, 0.2)
 		
 	local sheetFumikoData = { width=42, height=56, numFrames=136, sheetContentWidth=714, sheetContentHeight=448 }
 	local sheetFumiko = graphics.newImageSheet( "scenes/images/Fumiko3.png", sheetFumikoData )
@@ -211,7 +236,7 @@ function scene:create( event )
 	}
 	bat = display.newSprite( sheetBat, sheetBatSequenceData )
 	bat.isFixedRotation = true
-	bat.speed = 4
+	bat.speed = 5
 	physics.addBody( bat, "static", { outline=batOutline, friction=0.5, bounce=0.0, density=1.0 } )
 	bat.objType = "enemy"
 	sceneGroup:insert( bat )
@@ -236,7 +261,7 @@ function scene:create( event )
 	mage.anchorX = 0.5
 	mage.anchorY = 1.0
 	mage.isFixedRotation = true
-	mage.speed = 3
+	mage.speed = 4
 	physics.addBody( mage, "static", { outline=mageOutLine, friction=0.5, bounce=0.0, density=1.0} )
     mage.objType = "enemy"
 	sceneGroup:insert( mage )
@@ -251,6 +276,14 @@ function scene:create( event )
 			end
 		else
 		
+		end
+	end
+	
+	
+	function updateScore()
+		if (composer.getSceneName( "current" ) == "scenes.game") then
+		score = score + 1
+		scoreText.text = "Score: " .. score		
 		end
 	end
 			
@@ -270,9 +303,16 @@ function scene:create( event )
 		if self.x < -150 then
 			self.x = 800
 			self.y = math.random(180,250)
+			timer.performWithDelay(math.random(1000,8000), resetBatSpeed)
+			self.speed = 0
 		else
 			self.x = self.x - self.speed
 		end
+	end
+	
+	
+	function resetBatSpeed()
+		bat.speed = 5
 	end
 
 	bat.enterFrame = moveBat
@@ -281,23 +321,31 @@ function scene:create( event )
 		if self.x < -150 then
 			self.x = 800
 			self.y = 270
+			timer.performWithDelay(math.random(1000,8000), resetMageSpeed)
+			self.speed = 0
 		else
+
 			self.x = self.x - self.speed
 		end
+	end	
+	
+	function resetMageSpeed()
+		mage.speed = 4
 	end
-
+	
+	
 	mage.enterFrame = moveMage
 	
 	function touchAction( event )
 		if ( event.phase == "began" and fumiko.sensorOverlaps == 1 ) then
 		
 			
-			audio.play( jumpSound, { channel = 2 } )
+			-- audio.play( jumpSound, { channel = 2 } )
 		
 			-- Jump procedure here
 			local vx, vy = fumiko:getLinearVelocity()
 			fumiko:setLinearVelocity( vx, 0 )
-			fumiko:applyLinearImpulse( nil, -12, fumiko.x, fumiko.y )
+			fumiko:applyLinearImpulse( nil, -18, fumiko.x, fumiko.y )
 			
 		end
 	end
@@ -320,11 +368,25 @@ function scene:create( event )
 				self.sensorOverlaps = 0
 			end
 		elseif ( event.other.objType == "enemy" and  event.phase == "began" and event.selfElement ~= 6 ) then
-			composer.gotoScene( "scenes.restart", "fade", 800 )
+			updateOptions(score)
+			composer.gotoScene( "scenes.restart", options )
 		end
 	end
 	-- Associate collision handler function with character
 	fumiko.collision = sensorCollide
+	
+	function updateOptions(yourScore)
+			
+		options =
+		{
+			effect = "fade",
+			time = 800,
+			params = {
+				score = yourScore
+			}
+		}
+		
+	end
 
 	function spriteListener( event )
 	 
@@ -337,6 +399,7 @@ function scene:create( event )
 	end
 	
 	
+			
 
 end
  
@@ -362,12 +425,16 @@ function scene:show( event )
 		fumiko.sensorOverlaps = 1
 		bat:setSequence( "lento" )
 		bat:play()
-		bat.x = 800
+		bat.x = -200
 		bat.y = math.random(180,250)
 		mage:setSequence( "kavely" )
 		mage:play()
-		mage.x = 800
+		mage.x = -200
 		mage.y = 270
+		score = 0
+		
+		
+		scoreTimer = timer.performWithDelay(500, updateScore, -1)
 			
 		Runtime:addEventListener("enterFrame", buildings)
 		Runtime:addEventListener("enterFrame", buildings2)
@@ -387,9 +454,9 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
 		
-		gameMusicChannel = audio.play( gameMusic, { channel=1, loops=-1 } )
-		audio.setVolume( 0.15, { gameMusicChannel } )
-		audio.setVolume( 0.90, { channel = 2 } )
+		-- gameMusicChannel = audio.play( gameMusic, { channel=1, loops=-1 } )
+		-- audio.setVolume( 0.15, { gameMusicChannel } )
+		-- audio.setVolume( 0.90, { channel = 2 } )
     end
 end
  
@@ -406,8 +473,9 @@ function scene:hide( event )
 		fumiko:pause()
 		bat:pause()
 		mage:pause()
-		audio.rewind( { channel = 1 } )
-		audio.stop( { channel = 1 } )
+		timer.cancel(scoreTimer)
+		-- audio.rewind( { channel = 1 } )
+		-- audio.stop( { channel = 1 } )
 		
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

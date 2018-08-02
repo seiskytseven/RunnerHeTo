@@ -21,6 +21,8 @@ local startButton
 local restartMusic
 local restartMusicChannel
 local clickSound
+local scoreboard
+local params
  
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -32,8 +34,8 @@ function scene:create( event )
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 	
-	clickSound = audio.loadSound( "scenes/sounds/click.mp3" )
-	restartMusic = audio.loadStream( "scenes/musics/ambientmain_0.ogg" )
+	-- clickSound = audio.loadSound( "scenes/sounds/click.mp3" )
+	-- restartMusic = audio.loadStream( "scenes/musics/ambientmain_0.ogg" )
 	
 	
 	
@@ -50,7 +52,7 @@ function scene:create( event )
 	color2 = { 0.5, 0.5, 0.5, 0.2},
 	direction = "down"
 	}
-		
+	
 	background = display.newRect( sceneGroup, display.contentCenterX, display.contentCenterY, 700, 320 )
 	background.fill = paint
 	
@@ -60,12 +62,15 @@ function scene:create( event )
 	startButton = display.newText ( sceneGroup, "Try again", display.contentCenterX, display.contentCenterY, native.systemFont, 40 )
 	startButton:setFillColor( 0.1, 0.2, 0.2 )
 	
+	scoreboard = display.newText( sceneGroup, "Your score: 0", display.contentCenterX, display.contentCenterY-70, native.systemFont , 30)
+	scoreboard.fill = paint2
+	
 	local function onObjectTouch( event )
 		if ( event.phase == "began" ) then
 			-- print( "Touch event began on: " .. event.target.id )
 		elseif ( event.phase == "ended" ) then
 			-- print( "Touch event ended on: " .. event.target.id )
-			audio.play( clickSound )
+			-- audio.play( clickSound )
 			composer.gotoScene( "scenes.game", "fade", 600 )
 			
 		end
@@ -90,11 +95,13 @@ function scene:show( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
- 
+		
+		params = event.params
+		scoreboard.text = "Your score: " .. params.score
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen		
-		restartMusicChannel = audio.play( restartMusic, { channel=1, loops=-1 } )
-		audio.setVolume( 0.6, { restartMusicChannel } )
+		-- restartMusicChannel = audio.play( restartMusic, { channel=1, loops=-1 } )
+		-- audio.setVolume( 0.6, { restartMusicChannel } )
     end
 end
  
@@ -107,8 +114,8 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-		audio.rewind( {channel = 1} )
-		audio.stop( {channel = 1} )
+		-- audio.rewind( {channel = 1} )
+		-- audio.stop( {channel = 1} )
  
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
