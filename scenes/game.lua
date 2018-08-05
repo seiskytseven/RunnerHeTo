@@ -479,6 +479,7 @@ function scene:hide( event )
 		bat:pause()
 		mage:pause()
 		timer.cancel(scoreTimer)
+		timer.cancel(speedTimer)
 		audio.rewind( { channel = 1 } )
 		audio.stop( { channel = 1 } )
 		
