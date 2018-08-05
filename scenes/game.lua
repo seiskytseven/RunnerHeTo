@@ -5,6 +5,7 @@
 -----------------------------------------------------------------------------------------
 
 local composer = require( "composer" )
+local physics = require("physics")
  
 local scene = composer.newScene()
  
@@ -12,7 +13,8 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
- 
+
+--=Alustetaan käytettävät muuttujat
 local paint
 local paint2
 local paint3
@@ -32,7 +34,7 @@ local mage
 local gameMusic
 local jumpSound
 local gameMusicChannel
-local gameEffectChannel
+local gameSoundEffectChannel
 local scoreText
 local score
 local options
@@ -50,37 +52,33 @@ function scene:create( event )
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 	
-	
-	
-	local physics = require("physics")
 	physics.start()
 	physics.setGravity( 0, 20 )
 	
-	-- gameMusic = audio.loadStream( "scenes/musics/Emotive-Loop.mp3" )
-	-- jumpSound = audio.loadSound( "scenes/sounds/jump2.mp3" )
+	gameMusic = audio.loadStream( "scenes/musics/Emotive-Loop.mp3" )
+	jumpSound = audio.loadSound( "scenes/sounds/jump2.mp3" )
 	
-		
-	local paint = {
+	--=Käytettävät värit
+	paint = {
 		type = "gradient",
 		color1 = { 0, 0.3, 0.4 },
 		color2 = { 0, 0.3, 0.2, 0.2},
 		direction = "up"
 	}
 		
-	local paint2 = {
+	paint2 = {
 		type = "gradient",
 		color1 = { 0, 0, 0 },
 		color2 = { 0.4, 0.4, 0.4, 0.4},
 		direction = "up"
 	}
 
-	local paint3 = {
+	paint3 = {
 		type = "gradient",
 		color1 = { 0, 0, 0 },
 		color2 = { 0.4, 0.4, 0.4, 0.4},
 		direction = "down"
 	}
-	
 	
 	paint4 = {
 	type = "gradient",
@@ -89,92 +87,83 @@ function scene:create( event )
 	direction = "down"
 	}
 		
-	
+		
+	--=Taustan asetteleminen
 	background = display.newRect( sceneGroup, 240, 160, 700, 320 )
-	background.anchorX = 0.5
-	background.anchorY = 0.5
+	background.anchorX, background.anchorY = 0.5, 0.5
 	background.fill = paint
 
 	buildings = display.newImage( sceneGroup, "images/city_background_clean.png")
-	buildings.anchorX = 0.1
-	buildings.anchorY = 1.0
-	buildings.x = 0
-	buildings.y = 210
+	buildings.anchorX, buildings.anchorY = 0.1, 1.0
+	buildings.x, buildings.y = 0, 210
 	buildings:scale( 0.2, 0.2 )
 	buildings.speed = 1
 	buildings.leveys = 1630
 
 	buildings2 = display.newImage( sceneGroup, "images/city_background_clean.png")
-	buildings2.anchorX = 0.1
-	buildings2.anchorY = 1.0
-	buildings2.x = 1638
-	buildings2.y = 210
+	buildings2.anchorX, buildings2.anchorY = 0.1, 1.0
+	buildings2.x, buildings2.y = 1638, 210
 	buildings2:scale( 0.2, 0.2 )
 	buildings2.speed = 1
 	buildings2.leveys = 1630
 
 	asphalt = display.newImage( sceneGroup, "images/asphalt.jpg")
-	asphalt.anchorX = 0.1
-	asphalt.anchorY = 0.0
-	asphalt.x = 0
-	asphalt.y = 270
+	asphalt.anchorX, asphalt.anchorY = 0.1, 0.0
+	asphalt.x, asphalt.y = 0, 270
 	asphalt:scale( 0.33, 0.33 )
 	asphalt.speed = 3
 	asphalt.leveys = 1348
 
 	asphalt2 = display.newImage( sceneGroup, "images/asphalt.jpg")
-	asphalt2.anchorX = 0.1
-	asphalt2.anchorY = 0.0
-	asphalt2.x = 1352
-	asphalt2.y = 270
+	asphalt2.anchorX, asphalt2.anchorY = 0.1, 0.0
+	asphalt2.x, asphalt2.y = 1352, 270
 	asphalt2:scale( 0.33, 0.33 )
 	asphalt2.speed = 3
 	asphalt2.leveys = 1348
 
 	brickwall = display.newImage( sceneGroup, "images/Brickwall.jpg")
-	brickwall.anchorX = 0.1
-	brickwall.anchorY = 0.0
-	brickwall.x = 0
-	brickwall.y = 210
+	brickwall.anchorX, brickwall.anchorY = 0.1, 0.0
+	brickwall.x, brickwall.y = 0, 210
 	brickwall.speed = 3
 	brickwall.leveys = 1372
 
 	brickwall2 = display.newImage( sceneGroup, "images/Brickwall.jpg")
-	brickwall2.anchorX = 0.1
-	brickwall2.anchorY = 0.0
-	brickwall2.x = 1378
-	brickwall2.y = 210
+	brickwall2.anchorX, brickwall2.anchorY = 0.1, 0.0
+	brickwall2.x, brickwall2.y = 1378, 210
 	brickwall2.speed = 3
 	brickwall2.leveys = 1372
 
 	brickShadow = display.newRect( sceneGroup, 0, 210, 1100, 60 )
-	brickShadow.anchorX = 0.1
-	brickShadow.anchorY = 0.0
+	brickShadow.anchorX, brickShadow.anchorY = 0.1, 0.0
 	brickShadow.fill = paint2
 	brickShadow.alpha = 0.4
 
 	ground = display.newRect( sceneGroup, 0, 270, 1100, 90 )
-	ground.anchorX = 0.1
-	ground.anchorY = 0.0
+	ground.anchorX, ground.anchorY = 0.1, 0.0
 	ground.fill = paint3
 	ground.alpha = 0.8
 	ground.objType = "ground"
 	physics.addBody( ground, "static", {friction=0.5, bounce=0.0 } )
-		
 	
+		
+	--=Pistenäytön asetteleminen
 	scoreboard = display.newRoundedRect( sceneGroup, 320, 50, 200, 40, 10 )
 	scoreboard.anchorX, scoreboard.anchorY = 0.0, 0.5
 	scoreboard.fill = paint4
-		
 	
 	scoreText = display.newText( sceneGroup, "Score: 0", 0, 0, native.systemFont, 30)
 	scoreText.anchorX, scoreText.anchorY = 0.0, 0.5
 	scoreText.x, scoreText.y = 330, 50
 	scoreText:setFillColor( 0.05, 0.1, 0.2)
-		
+	
+	
+	--=Pelattavan Fumiko-hahmon asetteleminen	
+	
+	--Fumiko-hahmon eri kuvat ovat sheetFumiko-muuttujassa
 	local sheetFumikoData = { width=42, height=56, numFrames=136, sheetContentWidth=714, sheetContentHeight=448 }
 	local sheetFumiko = graphics.newImageSheet( "scenes/images/Fumiko3.png", sheetFumikoData )
 
+	--Fumiko hahmon animaatiot asetetaan sheetFumikoSequenceData-muuttujaan
 	local sheetFumikoSequenceData = {
 	{ name = "istuminen",
 	frames = { 33,50 },
@@ -201,13 +190,11 @@ function scene:create( event )
 	}
 	}
 	
-	
+	--Fumiko-hahmon fysiikat (mukaan lukien osumaboksit) tulevat 34. Fumiko-kuvaan perustuen
 	local fumikoFrameIndex = 34
-	 
 	local fumikoOutline = graphics.newOutline( 2, sheetFumiko, fumikoFrameIndex )
 	
-	
-	
+	--Itse Fumiko-hahmon luominen display-objektiksi
 	fumiko = display.newSprite( sheetFumiko, sheetFumikoSequenceData )
 	fumiko.anchorX = 0.5
 	fumiko.anchorY = 1.0
@@ -216,16 +203,18 @@ function scene:create( event )
 	fumiko.isFixedRotation = true
 	sceneGroup:insert( fumiko )
 	
+	
+	--=Bat-hahmon asetteleminen	
+	
+	--Bat-hahmon eri kuvat ovat sheetBat-muuttujassa
 	local sheetBatData = { width=32, height=32, numFrames=16, sheetContentWidth=128, sheetContentHeight=128 }
-
 	local sheetBat = graphics.newImageSheet( "scenes/images/lepakko.png", sheetBatData )
 	
-	
+	--Bat-hahmon fysiikat (mukaan lukien osumaboksit) tulevat 15. Bat-kuvaan perustuen
 	local batFrameIndex = 15
-	 
 	local batOutline = graphics.newOutline( 2, sheetBat, batFrameIndex )
 	
-	
+	--Bat hahmon animaatiot asetetaan sheetBatSequenceData-muuttujaan
 	local sheetBatSequenceData = {
 	{ name = "lento",
 	start = 14,
@@ -233,7 +222,9 @@ function scene:create( event )
 	time = 280,
 	loopCount = 0
 	}
-	}
+	}	
+	
+	--Itse Bat-hahmon luominen display-objektiksi
 	bat = display.newSprite( sheetBat, sheetBatSequenceData )
 	bat.isFixedRotation = true
 	bat.speed = 5
@@ -241,14 +232,18 @@ function scene:create( event )
 	bat.objType = "enemy"
 	sceneGroup:insert( bat )
 	
-	local sheetMageData = { width=64, height=64, numFrames=20, sheetContentWidth=576, sheetContentHeight=256 }
-
-	local sheetMage = graphics.newImageSheet( "scenes/images/magekavely.png", sheetMageData )
-
-	local mageFrameIndex = 18
+		
+	--=Mage-hahmon asetteleminen	
 	
+	--Mage-hahmon eri kuvat ovat sheetBat-muuttujassa
+	local sheetMageData = { width=64, height=64, numFrames=20, sheetContentWidth=576, sheetContentHeight=256 }
+	local sheetMage = graphics.newImageSheet( "scenes/images/magekavely.png", sheetMageData )
+	
+	--Mage-hahmon fysiikat (mukaan lukien osumaboksit) tulevat 18. Mage-kuvaan perustuen
+	local mageFrameIndex = 18
 	local mageOutLine = graphics.newOutline ( 2, sheetMage, mageFrameIndex )
 	
+	--Mage hahmon animaatiot asetetaan sheetBatSequenceData-muuttujaan
 	local sheetMageSequenceData = {
 	{ name = "kavely",
 	start = 10,
@@ -257,6 +252,8 @@ function scene:create( event )
 	loopCount = 0
 	}
 	}
+	
+	--Itse Mage-hahmon luominen display-objektiksi
 	mage = display.newSprite( sheetMage, sheetMageSequenceData )
 	mage.anchorX = 0.5
 	mage.anchorY = 1.0
@@ -265,7 +262,9 @@ function scene:create( event )
 	physics.addBody( mage, "static", { outline=mageOutLine, friction=0.5, bounce=0.0, density=1.0} )
     mage.objType = "enemy"
 	sceneGroup:insert( mage )
-			
+					
+	--=Tämä metodi vierittää display-objektia sen nopeuden verran vasemmalle.
+	-- ja jos se menee sille objektille annetun leveys-arvon yli se siirtää sen takaisin näytön oikeaan reunaan
 	function scrollBackground(self, event)
 		
 		if composer.getSceneName( "current" ) == "scenes.game" then
@@ -279,7 +278,16 @@ function scene:create( event )
 		end
 	end
 	
+	--=Lisätään scrollBackground-funktio taustan objekteille, joiden halutaan liikkuvan.
+	-- enterFrame tapahtuma toteutuu jokaisella kerralla kun näyttö päivittyy.
+	buildings.enterFrame = scrollBackground
+	buildings2.enterFrame = scrollBackground
+	asphalt.enterFrame = scrollBackground
+	asphalt2.enterFrame = scrollBackground
+	brickwall.enterFrame = scrollBackground
+	brickwall2.enterFrame = scrollBackground
 	
+	--=Funktio pisteiden lisäämiseen
 	function updateScore()
 		if (composer.getSceneName( "current" ) == "scenes.game") then
 		score = score + 1
@@ -287,18 +295,7 @@ function scene:create( event )
 		end
 	end
 			
-	buildings.enterFrame = scrollBackground
-
-	buildings2.enterFrame = scrollBackground
-
-	asphalt.enterFrame = scrollBackground
-
-	asphalt2.enterFrame = scrollBackground
-
-	brickwall.enterFrame = scrollBackground
-
-	brickwall2.enterFrame = scrollBackground
-
+	--=Lepakon funktioita
 	function moveBat(self, event)
 		if self.x < -150 then
 			self.x = 800
@@ -309,14 +306,14 @@ function scene:create( event )
 			self.x = self.x - self.speed
 		end
 	end
-	
-	
+		
 	function resetBatSpeed()
 		bat.speed = 5
 	end
 
 	bat.enterFrame = moveBat
 	
+	--=Magen funktioita
 	function moveMage(self, event)
 		if self.x < -150 then
 			self.x = 800
@@ -324,7 +321,6 @@ function scene:create( event )
 			timer.performWithDelay(math.random(1000,8000), resetMageSpeed)
 			self.speed = 0
 		else
-
 			self.x = self.x - self.speed
 		end
 	end	
@@ -333,16 +329,13 @@ function scene:create( event )
 		mage.speed = 4
 	end
 	
-	
 	mage.enterFrame = moveMage
 	
+	--=Hyppy toiminto. Ensin on kuitenkin tarkistettava onko hahmo maassa ennen kuin siirrämme pelattavaa hahmoa ylemmäs
 	function touchAction( event )
-		if ( event.phase == "began" and fumiko.sensorOverlaps == 1 ) then
+		if ( event.phase == "began" and fumiko.sensorOverlaps == 1 ) then	
 		
-			
-			-- audio.play( jumpSound, { channel = 2 } )
-		
-			-- Jump procedure here
+			audio.play( jumpSound, { channel = 2 } )	
 			local vx, vy = fumiko:getLinearVelocity()
 			fumiko:setLinearVelocity( vx, 0 )
 			fumiko:applyLinearImpulse( nil, -18, fumiko.x, fumiko.y )
@@ -350,18 +343,19 @@ function scene:create( event )
 		end
 	end
 
-
-
+	--=SensorCollide-funktio on fumiko-hahmon osumissensori ja sitä kutsutaan aina kun fumiko-hahmo osuu toiseen fysiikka-objektiin.
+	--=Fumiko hahmolle on luotu niin sanottu "jalkasensori", joka mahdollistaa hypyn hieman ennen kuin hahmo on todellisuudessa maassa.
+	-- Se on näillä asetuksilla Fumiko-hahmon 6. selfElement.
 	function sensorCollide( self, event )
-		-- Confirm that the colliding elements are the foot sensor and a ground object
+		-- Tarkistetaan, että osuvat kohteet ovat jalkasensori ja maatyypin objekti
 		if ( event.selfElement == 6 and event.other.objType == "ground" ) then
 		
-			-- Foot sensor has entered (overlapped) a ground object
+			-- Jalkasensori on mennyt maan sisään
 			if ( event.phase == "began" ) then
 				self:setSequence( "laskeutuminen" )
 				self:play()
 				self.sensorOverlaps = 1
-			-- Foot sensor has exited a ground object
+			-- Jalkasensori on poistunut maan sisästä
 			elseif ( event.phase == "ended" ) then
 				self:setSequence( "hyppy" )
 				self:play()
@@ -372,11 +366,12 @@ function scene:create( event )
 			composer.gotoScene( "scenes.restart", options )
 		end
 	end
-	-- Associate collision handler function with character
+	-- Asetetaan fumiko-hahmolle törmäyksen-käsittelijä
 	fumiko.collision = sensorCollide
 	
-	function updateOptions(yourScore)
-			
+	
+	--=Tällä funktiolla päivitetään uusimmat pisteet vietäväksi seuraavaan sceneen
+	function updateOptions(yourScore)			
 		options =
 		{
 			effect = "fade",
@@ -385,16 +380,17 @@ function scene:create( event )
 				score = yourScore
 			}
 		}
-		
 	end
 
+	
+	--Funktio, jolla saadaan laskeutumis-animaation jälkeen vaihdettua juoksuanimaatio
 	function spriteListener( event )
 	 
-		local thisSprite = event.target  -- "event.target" references the sprite
+		local thisSprite = event.target
 
 		if ( event.phase == "ended" and event.target.sequence == "laskeutuminen") then 
-			fumiko:setSequence( "juoksu" )  -- switch to "fastRun" sequence
-			fumiko:play()  -- play the new sequence
+			fumiko:setSequence( "juoksu" )
+			fumiko:play()
 		end
 	end
 	
@@ -454,9 +450,9 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
 		
-		-- gameMusicChannel = audio.play( gameMusic, { channel=1, loops=-1 } )
-		-- audio.setVolume( 0.15, { gameMusicChannel } )
-		-- audio.setVolume( 0.90, { channel = 2 } )
+		gameMusicChannel = audio.play( gameMusic, { channel=1, loops=-1 } )
+		audio.setVolume( 0.15, { gameMusicChannel } )
+		audio.setVolume( 0.90, { channel = 2 } )
     end
 end
  
@@ -474,12 +470,12 @@ function scene:hide( event )
 		bat:pause()
 		mage:pause()
 		timer.cancel(scoreTimer)
-		-- audio.rewind( { channel = 1 } )
-		-- audio.stop( { channel = 1 } )
+		audio.rewind( { channel = 1 } )
+		audio.stop( { channel = 1 } )
 		
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
-		
+		scoreText.text = "Score: 0"		
     end
 end
  

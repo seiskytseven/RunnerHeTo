@@ -34,10 +34,8 @@ function scene:create( event )
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
 	
-	-- clickSound = audio.loadSound( "scenes/sounds/click.mp3" )
-	-- restartMusic = audio.loadStream( "scenes/musics/ambientmain_0.ogg" )
-	
-	
+	clickSound = audio.loadSound( "scenes/sounds/click.mp3" )
+	restartMusic = audio.loadStream( "scenes/musics/ambientmain_0.ogg" )
 	
 	paint = {
 	type = "gradient",
@@ -67,10 +65,8 @@ function scene:create( event )
 	
 	local function onObjectTouch( event )
 		if ( event.phase == "began" ) then
-			-- print( "Touch event began on: " .. event.target.id )
 		elseif ( event.phase == "ended" ) then
-			-- print( "Touch event ended on: " .. event.target.id )
-			-- audio.play( clickSound )
+			audio.play( clickSound )
 			composer.gotoScene( "scenes.game", "fade", 600 )
 			
 		end
@@ -78,10 +74,6 @@ function scene:create( event )
 	end
 	
 	box:addEventListener( "touch", onObjectTouch )
-	
-
-
-
 	
 end
  
@@ -100,8 +92,8 @@ function scene:show( event )
 		scoreboard.text = "Your score: " .. params.score
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen		
-		-- restartMusicChannel = audio.play( restartMusic, { channel=1, loops=-1 } )
-		-- audio.setVolume( 0.6, { restartMusicChannel } )
+		restartMusicChannel = audio.play( restartMusic, { channel=1, loops=-1 } )
+		audio.setVolume( 0.6, { restartMusicChannel } )
     end
 end
  
@@ -114,8 +106,8 @@ function scene:hide( event )
  
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-		-- audio.rewind( {channel = 1} )
-		-- audio.stop( {channel = 1} )
+		audio.rewind( {channel = 1} )
+		audio.stop( {channel = 1} )
  
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
