@@ -273,7 +273,7 @@ function scene:create( event )
 			if self.x < -self.leveys then
 				self.x = self.leveys
 			else
-				self.x = self.x - (self.speed -baseSpeed)
+				self.x = self.x - self.speed -baseSpeed
 			end
 		else
 		
@@ -299,7 +299,7 @@ function scene:create( event )
 			
 			
 	function increaseSpeed()
-		baseSpeed = baseSpeed + 0.2
+		baseSpeed = baseSpeed + 1
 	end
 			
 	--=Lepakon funktioita
@@ -309,8 +309,8 @@ function scene:create( event )
 			self.y = math.random(180,250)
 			timer.performWithDelay(math.random(1000,8000), resetBatSpeed)
 			self.speed = 0
-		else
-			self.x = self.x - (self.speed - baseSpeed)
+		elseif (self.speed > 0) then
+			self.x = self.x - self.speed - baseSpeed
 		end
 	end
 		
@@ -327,8 +327,8 @@ function scene:create( event )
 			self.y = 270
 			timer.performWithDelay(math.random(1000,8000), resetMageSpeed)
 			self.speed = 0
-		else
-			self.x = self.x - (self.speed - baseSpeed)
+		elseif (self.speed > 0) then
+			self.x = self.x - self.speed - baseSpeed
 		end
 	end	
 	
