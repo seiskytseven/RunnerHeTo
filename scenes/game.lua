@@ -55,7 +55,7 @@ function scene:create( event )
     -- Code here runs when the scene is first created but has not yet appeared on screen
 	
 	physics.start()
-	physics.setGravity( 0, 20 )
+	physics.setGravity( 0, 40 )
 	
 	gameMusic = audio.loadStream( "scenes/musics/Emotive-Loop.mp3" )
 	jumpSound = audio.loadSound( "scenes/sounds/jump2.mp3" )
@@ -100,40 +100,40 @@ function scene:create( event )
 	buildings.x, buildings.y = 0, 210
 	buildings:scale( 0.2, 0.2 )
 	buildings.speed = 1
-	buildings.leveys = 1630
+	buildings.leveys = 1620
 
 	buildings2 = display.newImage( sceneGroup, "images/city_background_clean.png")
 	buildings2.anchorX, buildings2.anchorY = 0.1, 1.0
-	buildings2.x, buildings2.y = 1638, 210
+	buildings2.x, buildings2.y = 1620, 210
 	buildings2:scale( 0.2, 0.2 )
 	buildings2.speed = 1
-	buildings2.leveys = 1630
+	buildings2.leveys = 1620
 
 	asphalt = display.newImage( sceneGroup, "images/asphalt.jpg")
 	asphalt.anchorX, asphalt.anchorY = 0.1, 0.0
 	asphalt.x, asphalt.y = 0, 270
 	asphalt:scale( 0.33, 0.33 )
 	asphalt.speed = 3
-	asphalt.leveys = 1348
+	asphalt.leveys = 1334
 
 	asphalt2 = display.newImage( sceneGroup, "images/asphalt.jpg")
 	asphalt2.anchorX, asphalt2.anchorY = 0.1, 0.0
-	asphalt2.x, asphalt2.y = 1352, 270
+	asphalt2.x, asphalt2.y = 1334, 270
 	asphalt2:scale( 0.33, 0.33 )
 	asphalt2.speed = 3
-	asphalt2.leveys = 1348
+	asphalt2.leveys = 1334
 
 	brickwall = display.newImage( sceneGroup, "images/Brickwall.jpg")
 	brickwall.anchorX, brickwall.anchorY = 0.1, 0.0
 	brickwall.x, brickwall.y = 0, 210
 	brickwall.speed = 3
-	brickwall.leveys = 1372
+	brickwall.leveys = 1360
 
 	brickwall2 = display.newImage( sceneGroup, "images/Brickwall.jpg")
 	brickwall2.anchorX, brickwall2.anchorY = 0.1, 0.0
-	brickwall2.x, brickwall2.y = 1378, 210
+	brickwall2.x, brickwall2.y = 1360, 210
 	brickwall2.speed = 3
-	brickwall2.leveys = 1372
+	brickwall2.leveys = 1360
 
 	brickShadow = display.newRect( sceneGroup, 0, 210, 1100, 60 )
 	brickShadow.anchorX, brickShadow.anchorY = 0.1, 0.0
@@ -299,7 +299,7 @@ function scene:create( event )
 			
 			
 	function increaseSpeed()
-		baseSpeed = baseSpeed + 1
+		baseSpeed = baseSpeed + 0.5
 	end
 			
 	--=Lepakon funktioita
@@ -345,7 +345,7 @@ function scene:create( event )
 			audio.play( jumpSound, { channel = 2 } )	
 			local vx, vy = fumiko:getLinearVelocity()
 			fumiko:setLinearVelocity( vx, 0 )
-			fumiko:applyLinearImpulse( nil, -18, fumiko.x, fumiko.y )
+			fumiko:applyLinearImpulse( nil, -27, fumiko.x, fumiko.y )
 			
 		end
 	end
