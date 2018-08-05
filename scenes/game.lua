@@ -39,7 +39,9 @@ local scoreText
 local score
 local options
 local scoreTimer
+local speedTimer
 local scoreboard
+local baseSpeed
 
  
 -- -----------------------------------------------------------------------------------
@@ -271,7 +273,7 @@ function scene:create( event )
 			if self.x < -self.leveys then
 				self.x = self.leveys
 			else
-				self.x = self.x - self.speed
+				self.x = self.x - (self.speed -baseSpeed)
 			end
 		else
 		
@@ -295,6 +297,11 @@ function scene:create( event )
 		end
 	end
 			
+			
+	function increaseSpeed()
+		baseSpeed = baseSpeed + 0.2
+	end
+			
 	--=Lepakon funktioita
 	function moveBat(self, event)
 		if self.x < -150 then
@@ -303,7 +310,7 @@ function scene:create( event )
 			timer.performWithDelay(math.random(1000,8000), resetBatSpeed)
 			self.speed = 0
 		else
-			self.x = self.x - self.speed
+			self.x = self.x - (self.speed - baseSpeed)
 		end
 	end
 		
@@ -321,7 +328,7 @@ function scene:create( event )
 			timer.performWithDelay(math.random(1000,8000), resetMageSpeed)
 			self.speed = 0
 		else
-			self.x = self.x - self.speed
+			self.x = self.x - (self.speed - baseSpeed)
 		end
 	end	
 	
@@ -381,7 +388,7 @@ function scene:create( event )
 			}
 		}
 	end
-
+	
 	
 	--Funktio, jolla saadaan laskeutumis-animaation jälkeen vaihdettua juoksuanimaatio
 	function spriteListener( event )
@@ -428,9 +435,11 @@ function scene:show( event )
 		mage.x = -200
 		mage.y = 270
 		score = 0
+		baseSpeed = 0
 		
 		
 		scoreTimer = timer.performWithDelay(500, updateScore, -1)
+		speedTimer = timer.performWithDelay(10000, increaseSpeed, -1)
 			
 		Runtime:addEventListener("enterFrame", buildings)
 		Runtime:addEventListener("enterFrame", buildings2)
