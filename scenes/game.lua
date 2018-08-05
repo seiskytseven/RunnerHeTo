@@ -273,7 +273,7 @@ function scene:create( event )
 			if self.x < -self.leveys then
 				self.x = self.leveys
 			else
-				self.x = self.x - self.speed -baseSpeed
+				self.x = self.x - self.speed - baseSpeed
 			end
 		else
 		
@@ -439,7 +439,7 @@ function scene:show( event )
 		
 		
 		scoreTimer = timer.performWithDelay(500, updateScore, -1)
-		speedTimer = timer.performWithDelay(10000, increaseSpeed, -1)
+		speedTimer = timer.performWithDelay(10000, increaseSpeed, 10)
 			
 		Runtime:addEventListener("enterFrame", buildings)
 		Runtime:addEventListener("enterFrame", buildings2)
