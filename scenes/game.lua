@@ -99,14 +99,14 @@ function scene:create( event )
 	buildings.anchorX, buildings.anchorY = 0.1, 1.0
 	buildings.x, buildings.y = 0, 210
 	buildings:scale( 0.2, 0.2 )
-	buildings.speed = 1
+	buildings.speed = 0.2
 	buildings.leveys = 1620
 
 	buildings2 = display.newImage( sceneGroup, "images/city_background_clean.png")
 	buildings2.anchorX, buildings2.anchorY = 0.1, 1.0
 	buildings2.x, buildings2.y = 1620, 210
 	buildings2:scale( 0.2, 0.2 )
-	buildings2.speed = 1
+	buildings2.speed = 0.2
 	buildings2.leveys = 1620
 
 	asphalt = display.newImage( sceneGroup, "images/asphalt.jpg")
@@ -299,7 +299,7 @@ function scene:create( event )
 			
 			
 	function increaseSpeed()
-		baseSpeed = baseSpeed + 0.5
+		baseSpeed = baseSpeed + 0.05
 	end
 			
 	--=Lepakon funktioita
@@ -439,7 +439,7 @@ function scene:show( event )
 		
 		
 		scoreTimer = timer.performWithDelay(500, updateScore, -1)
-		speedTimer = timer.performWithDelay(10000, increaseSpeed, 10)
+		speedTimer = timer.performWithDelay(1000, increaseSpeed, 100)
 			
 		Runtime:addEventListener("enterFrame", buildings)
 		Runtime:addEventListener("enterFrame", buildings2)
